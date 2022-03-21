@@ -31,7 +31,6 @@ apt-get install apt-transport-https curl gnupg -yqq && \
   
 #install git and create gatling-solr library
 RUN apt-get update && \
-    apt-get upgrade -y && \
     apt-get install -y git && \
     mkdir -p /tmp/downloads/gatling-solr && \
     cd /tmp/downloads/gatling-solr && \
