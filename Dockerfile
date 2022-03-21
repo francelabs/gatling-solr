@@ -1,6 +1,4 @@
-FROM openjdk:11-jre
-
-MAINTAINER Amrit Sarkar <sarkaramrit2@gmail.com>
+FROM openjdk:11-jdk
 
 # working directory for gatling
 WORKDIR /opt
@@ -22,13 +20,15 @@ RUN \
 
 # Install sbt
 RUN \
-  curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
-  dpkg -i sbt-$SBT_VERSION.deb && \
-  rm sbt-$SBT_VERSION.deb && \
-  apt-get update && \
-  apt-get install sbt && \
+apt-get install apt-transport-https curl gnupg -yqq && \
+  echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list && \
+  echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list && \
+  curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import && \
+  chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg && \
+  apt-get update -y && \
+  apt-get install sbt=$SBT_VERSION -y && \
   sbt sbtVersion
-
+  
 #install git and create gatling-solr library
 RUN apt-get update && \
     apt-get upgrade -y && \
